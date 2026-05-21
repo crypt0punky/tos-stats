@@ -47,23 +47,27 @@ def _format_number(n: int, signed: bool = False) -> str:
 
 
 def _build_weekly_embed(snapshot: dict, site_url: str) -> dict:
-    """Главный embed - сводка по 6 парам + DXY aggregate."""
+    """Главный embed - сводка по 6 парам + DXY aggregate.
+
+    Таблица должна вмещаться в ~47 chars/line чтобы не wrap'ила в Discord embed
+    на mobile / узком окне.
+    """
     lines = []
     lines.append("```")
-    lines.append(f"{'PAIR':<8}{'TAG':<12}{'AM NET':>11}{'WoW':>10}{'W3y':>5}{'OI':>7}")
+    lines.append(f"{'PAIR':<8}{'TAG':<11}{'AM NET':>9}{'WoW':>7}{'W3y':>6}{'OI':>6}")
     for p in snapshot["pairs"]:
         tag = TAG_LABEL_RU.get(p["tag"], p["tag"])
         lines.append(
-            f"{p['id']:<8}{tag:<12}{_format_number(p['am_net'], True):>11}"
-            f"{_format_number(p['am_wow'], True):>10}{p['williams']['w3y']:>5}"
-            f"{_format_oi(p['oi']):>7}"
+            f"{p['id']:<8}{tag:<11}{_format_number(p['am_net'], True):>9}"
+            f"{_format_number(p['am_wow'], True):>7}{p['williams']['w3y']:>6}"
+            f"{_format_oi(p['oi']):>6}"
         )
     agg = snapshot["dxy_aggregate"]
     lines.append(
-        f"{'DXY':<8}{TAG_LABEL_RU.get(agg['tag'], agg['tag']):<12}"
-        f"{_format_number(agg['weighted_net'], True):>11}"
-        f"{_format_number(agg['wow'], True):>10}{agg['williams']['w3y']:>5}"
-        f"{'-':>7}"
+        f"{'DXY':<8}{TAG_LABEL_RU.get(agg['tag'], agg['tag']):<11}"
+        f"{_format_number(agg['weighted_net'], True):>9}"
+        f"{_format_number(agg['wow'], True):>7}{agg['williams']['w3y']:>6}"
+        f"{'-':>6}"
     )
     lines.append("```")
 
@@ -72,7 +76,8 @@ def _build_weekly_embed(snapshot: dict, site_url: str) -> dict:
     # TLDR убираем <em> теги для Discord (он их не рендерит).
     tldr_plain = snapshot["tldr"].replace("<em>", "**").replace("</em>", "**")
 
-    site_link = f"\n\n[Полный разбор → {site_url.replace('https://', '').rstrip('/')}]({site_url})"
+    domain = site_url.replace("https://", "").replace("http://", "").rstrip("/")
+    site_link = f"\n\n**→ [Полный разбор на {domain}]({site_url})**"
 
     embed = {
         "title": f"TOS COT Snapshot · Неделя {snapshot['week']} · {snapshot['year']}",
