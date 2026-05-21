@@ -128,7 +128,16 @@ function makeFallbackSeries(williamsNow) {
 // =====================
 
 function renderMain() {
-  document.getElementById("tldr-body").innerHTML = DATA.tldr || "";
+  // TLDR показываем только если есть реальный контент, не placeholder.
+  const tldrSection = document.getElementById("tldr-section");
+  const tldr = (DATA.tldr || "").trim();
+  const isPlaceholder = tldr.toLowerCase().includes("placeholder") || tldr.toLowerCase().includes("initial");
+  if (tldr && !isPlaceholder) {
+    document.getElementById("tldr-body").innerHTML = tldr;
+    tldrSection.classList.remove("hide");
+  } else {
+    tldrSection.classList.add("hide");
+  }
 
   const grid = document.getElementById("pairs-grid");
   grid.innerHTML = DATA.pairs.map(p => {
