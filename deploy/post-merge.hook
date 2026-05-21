@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Git post-merge hook. Срабатывает на git pull когда есть изменения в коде.
+# Перезапускает venv-install если requirements.txt поменялся.
+# НЕ перезапускает сервис -- pipeline и так одноразовый (oneshot), запустится по таймеру.
+set -euo pipefail
+
+REPO_DIR="/root/tos_bots/tos-stats"
+cd "$REPO_DIR"
+
+CHANGED=$(git diff-tree -r --name-only --no-commit-id HEAD@{1} HEAD 2>/dev/null || echo "")
+
+if echo "$CHANGED" | grep -q "^requirements.txt$"; then
+  echo "post-merge: requirements.txt changed, reinstalling deps"
+  ./.venv/bin/pip install -r requirements.txt --quiet
+fi
+
+if echo "$CHANGED" | grep -q "^deploy/tos-stats\."; then
+  echo "post-merge: systemd files changed, reloading"
+  cp deploy/tos-stats.service /etc/systemd/system/tos-stats.service
+  cp deploy/tos-stats.timer /etc/systemd/system/tos-stats.timer
+  systemctl daemon-reload
+fi
+
+echo "post-merge: done"

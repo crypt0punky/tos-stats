@@ -1,0 +1,20 @@
+[Unit]
+Description=tos-stats weekly COT pipeline (CFTC fetch -> AI narrative -> Discord post)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/tos_bots/tos-stats
+EnvironmentFile=/root/tos_bots/tos-stats/.env
+ExecStart=/root/tos_bots/tos-stats/.venv/bin/python -m ingest.run
+StandardOutput=append:/root/tos_bots/tos-stats/logs/weekly.log
+StandardError=append:/root/tos_bots/tos-stats/logs/weekly.log
+
+# Жёстко ограничиваем ресурсы, на Callisto 2GB RAM делят с access/cult-ботами.
+MemoryMax=512M
+CPUQuota=80%
+
+# Перезапуск при крахе не нужен -- если что-то сломалось, alert уйдёт в TG,
+# Daniil посмотрит и запустит вручную через systemctl start.
+Restart=no

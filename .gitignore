@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Secrets and config
+.env
+/config.py
+*.key
+*.pem
+
+# Databases
+*.db
+*.db.bak
+*.db-shm
+*.db-wal
+
+# Logs and tmp
+*.log
+*.log.*
+.DS_Store
+tmp/
+/data/

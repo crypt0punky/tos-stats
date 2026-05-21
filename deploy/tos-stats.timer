@@ -1,0 +1,13 @@
+[Unit]
+Description=Weekly trigger for tos-stats pipeline (Fri 21:32 CET, CFTC release at 15:30 ET = 21:30 CET)
+
+[Timer]
+# Пятница 21:32 CET / Berlin (= 15:32 ET). +2 минуты после CFTC publish.
+# При holiday-сдвиге CFTC fetch_with_retry сам ретраит до 02:00.
+OnCalendar=Fri 21:32 Europe/Berlin
+# Если сервер был выключен в момент срабатывания, запустить при старте.
+Persistent=true
+Unit=tos-stats.service
+
+[Install]
+WantedBy=timers.target

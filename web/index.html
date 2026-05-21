@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOS COT Snapshot</title>
+<meta name="description" content="Еженедельный срез позиций крупных спекулянтов на 6 ключевых FX-парах и агрегат по доллару. Данные CFTC, разбор от TOS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand" id="brand-home">The Other Side <span>· COT Snapshot</span></div>
+    <div class="nav-links">
+      <a id="nav-main">Сводка</a>
+      <a href="https://theotherside.trading" target="_blank">Главный сайт</a>
+    </div>
+    <div class="nav-actions">
+      <a class="btn-ghost" href="https://theotherside.trading" target="_blank">Discord</a>
+    </div>
+  </div>
+</nav>
+
+<div id="view-main" class="container">
+  <section class="hero">
+    <h1>Что делают<br>крупные спекулянты</h1>
+    <p>Еженедельный срез позиций институционалов на 6 ключевых FX-парах плюс агрегированный показатель по доллару. Данные CFTC, разбор от TOS.</p>
+    <div class="hero-meta">
+      <span>Неделя <strong id="meta-week">-</strong></span>
+      <span>Обновлено <strong id="meta-updated">-</strong></span>
+      <span>Источник <strong>CFTC TFF</strong></span>
+    </div>
+  </section>
+
+  <section class="tldr">
+    <div class="tldr-label">Главное за неделю</div>
+    <div class="tldr-body" id="tldr-body">Загрузка...</div>
+  </section>
+
+  <h2 class="section-title">Сводка по инструментам</h2>
+  <p class="section-sub">Williams 3y, нетто-позиция Asset Managers, недельная динамика. Клик по карточке - детальный разбор.</p>
+
+  <div class="grid" id="pairs-grid"></div>
+  <div class="dxy-card" id="dxy-card"></div>
+
+  <div class="footer">
+    <div><a href="https://theotherside.trading">← theotherside.trading</a></div>
+    <div>Не финансовая рекомендация · Данные CFTC</div>
+  </div>
+</div>
+
+<div id="view-detail" class="container hide">
+  <div class="back-link" id="back-link">&larr; Назад к сводке</div>
+  <div id="detail-content"></div>
+  <div class="footer">
+    <div><a href="https://theotherside.trading">← theotherside.trading</a></div>
+    <div>Не финансовая рекомендация · Данные CFTC</div>
+  </div>
+</div>
+
+<div id="view-error" class="container hide">
+  <div style="padding: 80px 0; text-align: center;">
+    <h1 style="font-size: 32px; margin-bottom: 16px;">Данные не загрузились</h1>
+    <p style="color: var(--color-midtone-gray); margin-bottom: 24px;">Не удалось получить current.json. Попробуй обновить страницу.</p>
+    <button class="btn-primary" onclick="location.reload()">Обновить</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

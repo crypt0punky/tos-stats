@@ -1,0 +1,117 @@
+{
+  "week": 21,
+  "year": 2026,
+  "report_date": "2026-05-19",
+  "updated_at": "2026-05-21T12:00:00+00:00",
+  "tldr": "Сайт собран, ингест pipeline настроен. После первого реального запуска CFTC-парсера здесь появится свежий разбор. Это initial placeholder.",
+  "pairs": [
+    {
+      "id": "EURUSD",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    },
+    {
+      "id": "GBPUSD",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    },
+    {
+      "id": "USDJPY",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    },
+    {
+      "id": "AUDUSD",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    },
+    {
+      "id": "USDCAD",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    },
+    {
+      "id": "NZDUSD",
+      "tag": "neutral",
+      "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+      "am_net": 0, "am_wow": 0, "am_mom": 0, "am_3m": 0,
+      "lf_net": 0, "lf_wow": 0,
+      "dealers_net": 0, "dealers_wow": 0,
+      "oi": 0, "oi_wow": 0,
+      "narrative": {
+        "snapshot": "Pipeline initialized, awaiting first CFTC ingest.",
+        "dynamics": "Данные появятся после первого запуска пайплайна.",
+        "historical": "История накопится по мере еженедельных запусков.",
+        "cross_pair": "Cross-pair контекст станет доступен после первого ингеста."
+      },
+      "watch": []
+    }
+  ],
+  "dxy_aggregate": {
+    "tag": "neutral",
+    "williams": {"w3y": 50, "w1y": 50, "w6m": 50},
+    "weighted_net": 0, "wow": 0, "mom": 0, "m3": 0,
+    "narrative": {
+      "snapshot": "DXY aggregate появится после первого ингеста.",
+      "dynamics": "—",
+      "historical": "—",
+      "cross_pair": "—"
+    }
+  },
+  "history": {}
+}
