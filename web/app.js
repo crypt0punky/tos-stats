@@ -49,7 +49,7 @@ function fmtPlain(n) {
   return n.toLocaleString("en-US");
 }
 function tagLabel(t) {
-  return { extreme: "Крайнее", stretched: "Растянуто", momentum: "Импульс", neutral: "Нейтрально" }[t] || t;
+  return { extreme: "Экстремум", stretched: "Перегрев", momentum: "Импульс", neutral: "Нейтрально" }[t] || t;
 }
 function directionOf(p) {
   if (!p || p.tag === "neutral") return null;

@@ -24,11 +24,20 @@ EMBED_COLOR_EXTREME = 0xB8392C  # red акцент для extreme alerts
 
 
 TAG_LABEL_RU = {
-    "extreme": "Крайнее",
-    "stretched": "Растянуто",
+    "extreme": "Экстремум",
+    "stretched": "Перегрев",
     "momentum": "Импульс",
     "neutral": "Нейтрально",
 }
+
+
+def _format_oi(n: int) -> str:
+    """Open Interest в коротком виде: 829377 -> '829k', 1234567 -> '1.2M'."""
+    if n >= 1_000_000:
+        return f"{n / 1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n // 1_000}k"
+    return str(n)
 
 
 def _format_number(n: int, signed: bool = False) -> str:
@@ -41,18 +50,20 @@ def _build_weekly_embed(snapshot: dict, site_url: str) -> dict:
     """Главный embed - сводка по 6 парам + DXY aggregate."""
     lines = []
     lines.append("```")
-    lines.append(f"{'PAIR':<8}{'TAG':<12}{'AM NET':>14}{'WoW':>10}{'W3y':>6}")
+    lines.append(f"{'PAIR':<8}{'TAG':<12}{'AM NET':>11}{'WoW':>10}{'W3y':>5}{'OI':>7}")
     for p in snapshot["pairs"]:
         tag = TAG_LABEL_RU.get(p["tag"], p["tag"])
         lines.append(
-            f"{p['id']:<8}{tag:<12}{_format_number(p['am_net'], True):>14}"
-            f"{_format_number(p['am_wow'], True):>10}{p['williams']['w3y']:>6}"
+            f"{p['id']:<8}{tag:<12}{_format_number(p['am_net'], True):>11}"
+            f"{_format_number(p['am_wow'], True):>10}{p['williams']['w3y']:>5}"
+            f"{_format_oi(p['oi']):>7}"
         )
     agg = snapshot["dxy_aggregate"]
     lines.append(
         f"{'DXY':<8}{TAG_LABEL_RU.get(agg['tag'], agg['tag']):<12}"
-        f"{_format_number(agg['weighted_net'], True):>14}"
-        f"{_format_number(agg['wow'], True):>10}{agg['williams']['w3y']:>6}"
+        f"{_format_number(agg['weighted_net'], True):>11}"
+        f"{_format_number(agg['wow'], True):>10}{agg['williams']['w3y']:>5}"
+        f"{'-':>7}"
     )
     lines.append("```")
 
@@ -61,9 +72,11 @@ def _build_weekly_embed(snapshot: dict, site_url: str) -> dict:
     # TLDR убираем <em> теги для Discord (он их не рендерит).
     tldr_plain = snapshot["tldr"].replace("<em>", "**").replace("</em>", "**")
 
+    site_link = f"\n\n[Полный разбор → {site_url.replace('https://', '').rstrip('/')}]({site_url})"
+
     embed = {
         "title": f"TOS COT Snapshot · Неделя {snapshot['week']} · {snapshot['year']}",
-        "description": f"{tldr_plain}\n\n{table}",
+        "description": f"{tldr_plain}\n\n{table}{site_link}",
         "color": EMBED_COLOR_DEFAULT,
         "url": site_url,
         "footer": {
@@ -97,7 +110,7 @@ def _build_alerts_embeds(snapshot: dict, site_url: str) -> list[dict]:
                 {"name": "AM Net", "value": _format_number(p["am_net"], True), "inline": True},
                 {"name": "Неделя", "value": _format_number(p["am_wow"], True), "inline": True},
             ],
-            "footer": {"text": "Открыть детальный разбор -> tos-stats"},
+            "footer": {"text": "Открыть детальный разбор -> stats.theotherside.trading"},
         })
 
     # DXY aggregate отдельным алертом если extreme.
@@ -141,10 +154,9 @@ async def post_weekly(snapshot: dict, site_url: str = "https://crypt0punky.githu
         log.warning("DISCORD_WEBHOOK_WEEKLY not set, skipping Discord post")
         return
 
-    # 1. Основной embed.
+    # 1. Основной embed. Имя/аватарка берутся из настроек webhook в Discord UI.
     weekly_embed = _build_weekly_embed(snapshot, site_url)
     await _post_webhook(weekly_url, {
-        "username": "TOS Stats",
         "embeds": [weekly_embed],
     })
     log.info("Posted weekly embed")
@@ -165,7 +177,6 @@ async def post_weekly(snapshot: dict, site_url: str = "https://crypt0punky.githu
 
     # Discord limit: 10 embeds per webhook call. У нас максимум 7 + DXY = 8 - влезаем.
     await _post_webhook(weekly_url, {
-        "username": "TOS Stats",
         "content": content,
         "embeds": alert_embeds,
         "allowed_mentions": {"roles": [swing_role] if swing_role else []},
