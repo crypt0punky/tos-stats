@@ -1,13 +1,13 @@
 """Кастомный композит "DXY positioning aggregate".
 
-Берём NET позиции AM по всем 6 парам, инвертируем знак для тех где
-long-валюта = short-USD (EUR/GBP/AUD/NZD -> sign -1), оставляем как есть
-для USD-base пар (USDJPY/USDCAD -- там long AM = long USD, sign +1).
+На вход приходит история, уже развёрнутая run.normalize_history в смысл ярлыка
+пары. Дальше знак чисто механический: для пар с иностранной валютой в базе
+(EURUSD/GBPUSD/AUDUSD/NZDUSD) лонг = шорт доллара, `dxy_sign = -1`; для
+USD-base пар (USDJPY/USDCAD) лонг = лонг доллара, `dxy_sign = +1`. Взвешиваем
+по долям DXY и складываем - получается сила доллара напрямую, без второй
+инверсии.
 
-В config.PAIRS у нас всё `dxy_sign = -1` потому что AM-данные с CFTC
-всегда котируются в "длинной валюте" (например JAPANESE YEN long = long JPY
-= short USD/JPY = инверс USD-strength). Чтобы получить "сколько AM в
-длинном USD" - инвертируем всё, потом взвешиваем по долям DXY.
+Положительный weighted_net = управляющие в ЛОНГЕ доллара.
 
 Williams считается тем же методом что и для пары, только над агрегированной
 серией.
@@ -55,11 +55,12 @@ def _weighted_usd_strength(pair_history: dict[str, list]) -> list[float]:
             w = config.DXY_WEIGHTS[p] / total_w
             am_net = pair_history[p][i]["am_net"]
             s += w * sign * am_net
-        # Инвертируем общий знак: положительное значение agg = долгий USD.
-        # Так как все pairs имеют sign=-1 (long currency = short USD),
-        # после применения sign получим "минус long currency = +short USD".
-        # Чтобы юзер читал положительное число как "long USD" - умножаем на -1.
-        series.append(-s)
+        # Второй инверсии тут НЕТ и быть не должно: dxy_sign уже перевёл каждый
+        # ряд в силу доллара, поэтому s и есть ответ. Лишний `-s` стоял здесь до
+        # 21.09.2026 и переворачивал композит - плюс на витрине означал шорт
+        # доллара при подписи "лонг". Инверсия ряда живёт в
+        # run.normalize_history, знак вклада - в config.PAIRS["dxy_sign"].
+        series.append(s)
     return series
 
 

@@ -27,6 +27,7 @@ from . import (
     publish,
     williams,
 )
+from .run import normalize_history
 
 
 async def backfill(skip_narrate: bool = False) -> int:
@@ -45,7 +46,10 @@ async def backfill(skip_narrate: bool = False) -> int:
     log.info("Saved %d rows to DB", new_rows)
 
     # 3. Считаем метрики.
-    history_by_pair = {p: db.get_history(p, weeks=200) for p in config.PAIRS}
+    # Знак разворачивается ровно как в run.run_pipeline: backfill - второй вход
+    # в те же расчёты, и сырой ряд сюда попадать не должен.
+    history_by_pair = {p: normalize_history(p, db.get_history(p, weeks=200))
+                       for p in config.PAIRS}
     missing = [p for p, h in history_by_pair.items() if not h]
     if missing:
         log.error("Empty history for: %s. CFTC returned no rows -- check contract codes.", missing)

@@ -67,6 +67,38 @@ def git_push(repo_root: Path, message: str) -> None:
     subprocess.check_call(["git", "-C", str(repo_root), "push"], stderr=subprocess.STDOUT)
 
 
+# Поля, которые CFTC отдаёт в терминах длинной валюты.
+_NET_FIELDS = ("am_net", "lf_net", "dealer_net", "other_net")
+_SIDE_FIELDS = (("am_long", "am_short"), ("lf_long", "lf_short"),
+                ("dealer_long", "dealer_short"), ("other_long", "other_short"))
+
+
+def normalize_history(pair: str, rows: list) -> list:
+    """Ряд пары в смысле её собственного ярлыка.
+
+    CFTC котирует иену и канадца как длинную позицию В САМОЙ ВАЛЮТЕ: лонг иены
+    это шорт USD/JPY. Для пар из config.INVERT_FOR_DISPLAY знак всех нетто
+    переворачивается, а длинная и короткая стороны меняются местами. Остальные
+    пары возвращаются как есть.
+
+    Инверсия применяется РОВНО ЗДЕСЬ, один раз, до williams, dxy_agg, narrate и
+    publish. Ниже по цепочке инверсий нет и быть не должно.
+
+    Возвращает dict-копии: исходные sqlite3.Row не меняются.
+    """
+    if pair not in config.INVERT_FOR_DISPLAY:
+        return rows
+    out = []
+    for r in rows:
+        d = dict(r)
+        for field in _NET_FIELDS:
+            d[field] = -d[field]
+        for long_field, short_field in _SIDE_FIELDS:
+            d[long_field], d[short_field] = d[short_field], d[long_field]
+        out.append(d)
+    return out
+
+
 async def run_pipeline() -> dict:
     """Главная функция. Возвращает stats dict для финального алерта."""
     log = logging.getLogger("run")
@@ -92,9 +124,12 @@ async def run_pipeline() -> dict:
     log.info("Saved %d rows to DB", new_rows)
 
     # 3. Считаем метрики по каждой паре + DXY.
+    # Знак разворачивается здесь и только здесь: дальше по цепочке (williams,
+    # dxy_agg, narrate, publish) ряд уже в смысле ярлыка пары.
     history_by_pair = {}
     for pair in config.PAIRS.keys():
-        history_by_pair[pair] = db.get_history(pair, weeks=200)
+        history_by_pair[pair] = normalize_history(
+            pair, db.get_history(pair, weeks=200))
 
     pair_metrics = []
     for pair in config.PAIRS.keys():

@@ -41,8 +41,9 @@ PAIRS = {
         "code": "097741",
         "name": "JAPANESE YEN",
         "exchange": "CHICAGO MERCANTILE EXCHANGE",
-        # Long JPY = short USD/JPY, инверс для DXY long USD.
-        "dxy_sign": -1,
+        # Ряд уже развёрнут normalize_history в смысл ярлыка: лонг USD/JPY =
+        # лонг доллара, поэтому знак +1.
+        "dxy_sign": 1,
         "dxy_weight": 0.136,
     },
     "AUDUSD": {
@@ -56,7 +57,8 @@ PAIRS = {
         "code": "090741",
         "name": "CANADIAN DOLLAR",
         "exchange": "CHICAGO MERCANTILE EXCHANGE",
-        "dxy_sign": -1,
+        # Как и USDJPY: после normalize_history лонг USD/CAD = лонг доллара.
+        "dxy_sign": 1,
         "dxy_weight": 0.091,
     },
     "NZDUSD": {
@@ -69,8 +71,9 @@ PAIRS = {
 }
 
 # Минус CFTC: они котируют JPY и CAD как long JPY / long CAD, а торговая
-# пара USD/JPY и USD/CAD имеет обратный смысл. Это исправляется на этапе
-# отображения (USDJPY long AM = short JPY = -value в CFTC данных).
+# пара USD/JPY и USD/CAD имеет обратный смысл. Разворачивает это
+# run.normalize_history - один раз, сразу после чтения из БД и ДО williams,
+# dxy_agg, narrate и publish. Больше нигде инверсий нет.
 INVERT_FOR_DISPLAY = {"USDJPY", "USDCAD"}
 
 # ----- DXY aggregate -----
